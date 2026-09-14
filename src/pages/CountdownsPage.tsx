@@ -1,0 +1,9 @@
+import { useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { Plus, Trash2 } from 'lucide-react';
+import { db } from '../db/database';
+import { uid } from '../utils/id';
+import { daysBetween } from '../utils/date';
+import { Card, EmptyState, PageHeader } from '../components/ui';
+
+export function CountdownsPage(){const items=useLiveQuery(()=>db.countdowns.toArray(),[])??[];const [name,setName]=useState('');const [date,setDate]=useState('');const add=async()=>{if(!name.trim()||!date)return;await db.countdowns.add({id:uid(),name:name.trim(),date,icon:'CalendarHeart',color:'#d58a54',category:'自定义',repeat:'不重复',mode:'倒计时',createdAt:new Date().toISOString()});setName('');setDate('')};return <div className="page"><PageHeader title="纪念日与倒数日" subtitle="考试、生日、旅行和重要交付都可以放在这里。"/><Card><div className="grid two"><div className="field"><label>名称</label><input className="input" value={name} onChange={e=>setName(e.target.value)} placeholder="例如：英语四级考试"/></div><div className="field"><label>日期</label><input className="input" type="date" value={date} onChange={e=>setDate(e.target.value)}/></div></div><button className="btn primary" style={{width:'100%',marginTop:12}} onClick={add}><Plus size={17}/>添加重要日期</button></Card><div className="section stack">{items.length?items.sort((a,b)=>a.date.localeCompare(b.date)).map(x=><Card key={x.id}><div className="row between"><div><div className="eyebrow">{x.category} · {x.date}</div><h2 style={{marginBottom:4}}>{x.name}</h2><div className="metric small">{daysBetween(x.date)>=0?`还有 ${daysBetween(x.date)} 天`:`已经 ${Math.abs(daysBetween(x.date))} 天`}</div></div><button className="btn ghost small" onClick={async()=>{if(confirm(`删除“${x.name}”？`))await db.countdowns.delete(x.id)}}><Trash2 size={16}/></button></div></Card>):<EmptyState title="还没有重要日期" text="加一个值得期待或必须记住的日子。"/>}</div></div>}

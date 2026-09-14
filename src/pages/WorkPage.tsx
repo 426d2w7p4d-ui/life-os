@@ -1,0 +1,9 @@
+import { useNavigate } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { UsersRound, Video, Columns3, ChevronRight } from 'lucide-react';
+import { db } from '../db/database';
+import { Card, PageHeader, ProgressBar, Section } from '../components/ui';
+
+export function WorkPage(){const nav=useNavigate();const clients=useLiveQuery(()=>db.clients.toArray(),[])??[];const videos=useLiveQuery(()=>db.videos.toArray(),[])??[];const published=videos.filter(v=>v.status==='已发布').length;return <div className="page"><PageHeader title="工作台" subtitle="客户、视频数量和制作进度，一眼看清。"/><div className="grid two"><Card><div className="label">合作中客户</div><div className="metric">{clients.filter(c=>c.status==='合作中').length}</div></Card><Card><div className="label">已发布视频</div><div className="metric">{published}</div></Card></div>
+<Section title="本月视频进度"><Card><div className="row between"><div><strong>{published} / {Math.max(videos.length,20)}</strong><div className="subtle">按当前演示数据统计</div></div><span className="badge primary">{Math.round(published/Math.max(videos.length,20)*100)}%</span></div><div style={{marginTop:12}}><ProgressBar value={published/Math.max(videos.length,20)*100}/></div></Card></Section>
+<Section title="工作入口"><Card>{[[UsersRound,'客户列表','档案、合作状态与约定视频量','/clients'],[Video,'视频列表','单条视频文案、脚本、发布与数据','/videos'],[Columns3,'视频看板','按状态查看制作流水线','/videos?view=kanban']].map(([Icon,title,sub,path])=>{const I=Icon as typeof Video;return <button key={String(path)} className="list-link" style={{width:'100%',borderLeft:0,borderRight:0,borderTop:0,background:'transparent'}} onClick={()=>nav(String(path))}><div className="row"><div className="icon-box"><I size={19}/></div><div style={{textAlign:'left'}}><strong>{String(title)}</strong><div className="subtle" style={{fontSize:12}}>{String(sub)}</div></div></div><ChevronRight size={18}/></button>})}</Card></Section></div>}
