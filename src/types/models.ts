@@ -13,6 +13,14 @@ export interface CalendarItem {
   createdAt: string;
 }
 
+export interface Attachment {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  dataUrl?: string;
+}
+
 export interface Subtask {
   id: string;
   title: string;
@@ -36,6 +44,7 @@ export interface Task {
   reminder?: string;
   repeat?: string;
   subtasks: Subtask[];
+  attachments?: Attachment[];
   notes?: string;
   sourceType?: 'course' | 'video' | 'pet' | 'english' | 'manual';
   sourceId?: string;
@@ -61,6 +70,14 @@ export interface Course {
   updatedAt: string;
 }
 
+export interface CountdownMemory {
+  id: string;
+  title: string;
+  date: string;
+  image?: string;
+  note?: string;
+}
+
 export interface Countdown {
   id: string;
   name: string;
@@ -69,8 +86,11 @@ export interface Countdown {
   color: string;
   category: string;
   notes?: string;
-  repeat: '不重复' | '每年';
-  mode: '倒计时' | '正计时';
+  coverImage?: string;
+  reminderDays?: number;
+  memories?: CountdownMemory[];
+  repeat: '不重复' | '每年' | '每月';
+  mode: '倒计时' | '正计时' | '同时显示';
   createdAt: string;
 }
 
@@ -133,15 +153,19 @@ export interface Pet {
   neutered?: boolean;
   adoptionDate?: string;
   chip?: string;
+  avatar?: string;
+  photo?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
 }
 
+export type PetRecordType = '疫苗' | '狂犬' | '驱虫' | '体检' | '疾病' | '手术' | '药物' | '过敏' | '体重' | '饮食' | '洗澡' | '美容' | '用品' | '护理' | '行为' | '自定义';
+
 export interface PetRecord {
   id: string;
   petId: string;
-  type: '疫苗' | '驱虫' | '体检' | '疾病' | '手术' | '药物' | '过敏' | '体重' | '饮食' | '洗澡' | '美容' | '用品';
+  type: PetRecordType;
   title: string;
   date: string;
   nextDate?: string;
@@ -149,6 +173,9 @@ export interface PetRecord {
   unit?: string;
   hospital?: string;
   doctor?: string;
+  medicine?: string;
+  dosage?: string;
+  attachments?: Attachment[];
   notes?: string;
   createdAt: string;
 }
